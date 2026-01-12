@@ -7,13 +7,17 @@ import "./index.css";
 import Home from "./pages/home";
 import Login from "./pages/login";
 import { MainLayout } from "./components/layout/main-layout";
+import EventsPage from "./pages/events";
+import EventDetailsPage from "./pages/event-details";
 
 const router = createBrowserRouter([
   {
     Component: MainLayout,
     children: [
-      {index: true, element: <Home />},
-    ]
+      { index: true, element: <Home /> },
+      { path: "/events", element: <EventsPage /> },
+      { path: "/events/:id", element: <EventDetailsPage /> },
+    ],
   },
   {
     path: "/login",

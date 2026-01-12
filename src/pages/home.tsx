@@ -5,7 +5,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Link } from "react-router";
 import { Badge } from "../components/ui/badge";
 
-const featuredEvents = [
+export const featuredEvents = [
   {
     id: 1,
     name: "Summer Music Festival 2026",
