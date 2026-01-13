@@ -13,6 +13,8 @@ import EventDetailsPage from "./pages/event-details";
 import { AuthProvider } from "./context/auth-context";
 import { DashboardLayout } from "./components/layout/dashboard/dashboard-layout";
 import DashboardPage from "./pages/admin/dashboard";
+import AdminEventsPage from "./pages/admin/events";
+import AdminUsersPage from "./pages/admin/users";
 
 const router = createBrowserRouter([
   {
@@ -26,7 +28,17 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     Component: DashboardLayout,
-    children: [{ index: true, element: <DashboardPage /> }],
+    children: [
+      { index: true, element: <DashboardPage /> },
+      {
+        path: "/dashboard/events",
+        element: <AdminEventsPage />,
+      },
+      {
+        path: "/dashboard/users",
+        element: <AdminUsersPage />,
+      },
+    ],
   },
   {
     path: "/login",

@@ -1,12 +1,23 @@
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "../../ui/sidebar";
 import { AppSidebar } from "./sidebar";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../../../context/auth-context";
 
 export const DashboardLayout = () => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // if (user?.role !== 'admin') {
+    //   navigate("/")
+    // }
+  }, [user, navigate]);
+
   return (
     <SidebarProvider>
       <AppSidebar />

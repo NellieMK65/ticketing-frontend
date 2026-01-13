@@ -7,7 +7,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "../../ui/sidebar";
-import { Home } from "@hugeicons/core-free-icons";
+import { Calendar, Home, UserAccountIcon } from "@hugeicons/core-free-icons";
+import { Link, useLocation } from "react-router";
 
 type Items = {
   title: string;
@@ -17,11 +18,26 @@ type Items = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { pathname } = useLocation();
+
   const navItems: Items[] = [
     {
       icon: Home,
       url: "/dashboard",
       title: "Dashboard",
+      isActive: pathname == "/dashboard",
+    },
+    {
+      icon: Calendar,
+      url: "/dashboard/events",
+      title: "Events",
+      isActive: pathname == "/dashboard/events",
+    },
+    {
+      icon: UserAccountIcon,
+      url: "/dashboard/users",
+      title: "Users",
+      isActive: pathname == "/dashboard/users",
     },
   ];
 
@@ -44,10 +60,10 @@ export function NavMain({ items }: { items: Items[] }) {
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton asChild isActive={item.isActive}>
-            <a href={item.url}>
+            <Link to={item.url}>
               <HugeiconsIcon icon={item.icon} />
               <span>{item.title}</span>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
