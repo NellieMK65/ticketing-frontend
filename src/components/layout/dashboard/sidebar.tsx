@@ -7,7 +7,12 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "../../ui/sidebar";
-import { Calendar, Home, UserAccountIcon } from "@hugeicons/core-free-icons";
+import {
+  Calendar,
+  CatalogueIcon,
+  Home,
+  UserAccountIcon,
+} from "@hugeicons/core-free-icons";
 import { Link, useLocation } from "react-router";
 
 type Items = {
@@ -26,6 +31,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "/dashboard",
       title: "Dashboard",
       isActive: pathname == "/dashboard",
+    },
+    {
+      icon: CatalogueIcon,
+      url: "/dashboard/categories",
+      title: "Categories",
+      isActive: pathname == "/dashboard/categories",
     },
     {
       icon: Calendar,
