@@ -11,6 +11,8 @@ import { MainLayout } from "./components/layout/main-layout";
 import EventsPage from "./pages/events";
 import EventDetailsPage from "./pages/event-details";
 import { AuthProvider } from "./context/auth-context";
+import { DashboardLayout } from "./components/layout/dashboard/dashboard-layout";
+import DashboardPage from "./pages/admin/dashboard";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,11 @@ const router = createBrowserRouter([
       { path: "/events", element: <EventsPage /> },
       { path: "/events/:id", element: <EventDetailsPage /> },
     ],
+  },
+  {
+    path: "/dashboard",
+    Component: DashboardLayout,
+    children: [{ index: true, element: <DashboardPage /> }],
   },
   {
     path: "/login",
