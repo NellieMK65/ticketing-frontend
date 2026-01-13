@@ -18,6 +18,9 @@ import { Input } from "./ui/input";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Spinner } from "./ui/spinner";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 const schema = z.object({
   email: z.email({ error: "Enter a valid email address" }),
@@ -30,6 +33,8 @@ export const LoginForm = ({
   className,
   ...props
 }: React.ComponentProps<"div">) => {
+  const navigate = useNavigate();
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -46,17 +51,34 @@ export const LoginForm = ({
         "Content-Type": "application/json",
       },
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        const data = await res.json();
+
+        // if the response is not successful, we throw a new error which
+        // will be handled by the .catch callback
+        if (!res.ok) {
+          throw new Error(data?.message ?? "Unable to login");
+        }
+
+        return data;
+      })
       .then((data) => {
-        console.log(data);
         // 1. display messages to users
+        toast.success(data.message);
 
-        // 2. store the access token somewhere
+        // 2. store the access token & user in localstorage
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-        // 3. redirect the user to the desired
+        // 3. redirect the user to the desired page
+        if (data.user.role == "user") {
+          navigate("/");
+        } else {
+          navigate("/dashboard");
+        }
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.message);
       });
   });
 
@@ -115,7 +137,14 @@ export const LoginForm = ({
               />
 
               <Field>
-                <Button type="submit">Login</Button>
+                <Button
+                  type="submit"
+                  className="cursor-pointer"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting && <Spinner />}
+                  Login
+                </Button>
                 <Button variant="outline" type="button">
                   Login with Google
                 </Button>
