@@ -16,6 +16,7 @@ import DashboardPage from "./pages/admin/dashboard";
 import AdminEventsPage from "./pages/admin/events";
 import AdminUsersPage from "./pages/admin/users";
 import CheckoutPage from "./pages/checkout";
+import CategoriesPage from "./pages/categories";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "/events", element: <EventsPage /> },
       { path: "/events/:id", element: <EventDetailsPage /> },
+      { path: "/categories", element: <CategoriesPage /> },
       { path: "/checkout", element: <CheckoutPage /> },
     ],
   },
