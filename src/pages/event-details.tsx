@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import type { Event } from "../lib/types";
+import { TicketCounter } from "../components/ticket-counter";
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("en-US", {
@@ -198,9 +199,16 @@ export default function EventDetailsPage() {
                         </div>
                       </div>
                     </div>
-                    <Button className="w-full mt-3" size="sm">
-                      Select
-                    </Button>
+                    {/* TicketCounter component for incrementing/decrementing tickets */}
+                    {/* eventId is passed to track which event these tickets belong to in the cart */}
+                    <TicketCounter
+                      eventId={event?.id ?? 0}
+                      ticketId={ticket.id}
+                      ticketName={ticket.name}
+                      price={ticket.price}
+                      availableTickets={ticket.tickets_available}
+                      onCountChange={() => {}}
+                    />
                   </div>
                 ))}
 
