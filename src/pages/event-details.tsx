@@ -213,8 +213,8 @@ export default function EventDetailsPage() {
                 ))}
 
                 <div className="pt-4 border-t border-border">
-                  <Button className="w-full" size="lg">
-                    Continue to Checkout
+                  <Button className="w-full" size="lg" asChild>
+                    <Link to="/checkout">Continue to Checkout</Link>
                   </Button>
                 </div>
 

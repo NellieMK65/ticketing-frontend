@@ -15,6 +15,7 @@ import { DashboardLayout } from "./components/layout/dashboard/dashboard-layout"
 import DashboardPage from "./pages/admin/dashboard";
 import AdminEventsPage from "./pages/admin/events";
 import AdminUsersPage from "./pages/admin/users";
+import CheckoutPage from "./pages/checkout";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "/events", element: <EventsPage /> },
       { path: "/events/:id", element: <EventDetailsPage /> },
+      { path: "/checkout", element: <CheckoutPage /> },
     ],
   },
   {
