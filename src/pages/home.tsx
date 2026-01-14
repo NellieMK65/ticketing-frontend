@@ -4,74 +4,23 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { Link } from "react-router";
 import { Badge } from "../components/ui/badge";
-
-export const featuredEvents = [
-  {
-    id: 1,
-    name: "Summer Music Festival 2026",
-    description:
-      "Join us for the biggest music festival of the year featuring top artists from around the world.",
-    venue: "Central Park Amphitheater",
-    poster:
-      "https://6amcity.brightspotcdn.com/dims4/default/8a8c4fb/2147483647/strip/true/crop/2086x1174+0+93/resize/1000x563!/quality/90/?url=https%3A%2F%2Fk1-prod-sixam-city.s3.us-east-2.amazonaws.com%2Fbrightspot%2Fdd%2F63%2F33ab6dde4a8ba9f1315b9c640532%2Fnash-bonnaroo-charles-reagan-bonnaroo-2022-march2023.png",
-    status: "active",
-    category: "Music",
-    start_date: "2026-06-15",
-    end_date: "2026-06-17",
-    price_from: 89,
-  },
-  {
-    id: 2,
-    name: "Tech Innovation Conference",
-    description:
-      "Explore the future of technology with industry leaders and innovators.",
-    venue: "Convention Center Downtown",
-    poster:
-      "https://www.eventbookings.com/uploads/orgs/65afe26ccc1988265a9b37ce59b86a56/bb22883b1923b0ffc60271687e15c640/events/9b1330c7-720e-4342-a32d-1823d7b71cdd.png",
-    status: "active",
-    category: "Conference",
-    start_date: "2026-03-20",
-    end_date: "2026-03-22",
-    price_from: 299,
-  },
-  {
-    id: 3,
-    name: "Food & Wine Experience",
-    description: "A culinary journey featuring renowned chefs and sommeliers.",
-    venue: "Riverside Gardens",
-    poster:
-      "https://www.localwineevents.com/assets/images//photos/wine-and-food-home.jpg",
-    status: "active",
-    category: "Food & Drink",
-    start_date: "2026-04-10",
-    end_date: "2026-04-10",
-    price_from: 125,
-  },
-  {
-    id: 4,
-    name: "Art Gallery Opening",
-    description: "Contemporary art exhibition showcasing emerging artists.",
-    venue: "Modern Art Museum",
-    poster:
-      "https://images.stockcake.com/public/2/3/9/2397d77f-af92-4b51-8bb9-d60d138cf4d0_large/vibrant-art-exhibition-stockcake.jpg",
-    status: "active",
-    category: "Arts",
-    start_date: "2026-02-28",
-    end_date: "2026-02-28",
-    price_from: 45,
-  },
-];
-
-const categories = [
-  { name: "Music", count: 156 },
-  { name: "Conference", count: 89 },
-  { name: "Sports", count: 234 },
-  { name: "Arts", count: 78 },
-  { name: "Food & Drink", count: 112 },
-  { name: "Workshops", count: 95 },
-];
+import { useEffect, useState } from "react";
+import type { Category, Event } from "../lib/types";
 
 export default function Home() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data));
+
+    fetch("http://localhost:5000/events")
+      .then((res) => res.json())
+      .then((data) => setEvents(data));
+  }, []);
+
   return (
     <div>
       {/* Hero Section */}
@@ -136,7 +85,7 @@ export default function Home() {
                     {category.name}
                   </div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    {category.count} events
+                    {category.event_count} events
                   </div>
                 </CardContent>
               </Card>
@@ -156,7 +105,7 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {featuredEvents.map((event) => (
+            {events.slice(0, 4).map((event) => (
               <Link key={event.id} to={`/events/${event.id}`}>
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow h-full">
                   <div className="aspect-video relative overflow-hidden bg-muted">
@@ -166,7 +115,7 @@ export default function Home() {
                       className="object-cover w-full h-full"
                     />
                     <Badge className="absolute top-3 right-3 bg-accent text-accent-foreground">
-                      {event.category}
+                      {event.category.name}
                     </Badge>
                   </div>
                   <CardContent className="p-6">
@@ -197,7 +146,11 @@ export default function Home() {
                       <div className="flex items-center gap-2">
                         <HugeiconsIcon icon={Ticket} className="h-4 w-4" />
                         <span className="font-semibold text-foreground">
-                          From KES {event.price_from}
+                          From KES{" "}
+                          {
+                            (event.tickets.sort((a, b) => a.price - b.price) ??
+                              [])[0]?.price
+                          }
                         </span>
                       </div>
                     </div>

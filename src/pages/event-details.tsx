@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { featuredEvents } from "./home";
 import { Button } from "../components/ui/button";
 import {
   Calendar,
@@ -18,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import type { Event } from "../lib/types";
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString("en-US", {
@@ -36,21 +36,15 @@ const formatTime = (dateString: string) => {
 };
 
 export default function EventDetailsPage() {
-  const [event, setEvent] = useState<any>(null);
+  const [event, setEvent] = useState<Event | null>(null);
 
   const params = useParams();
 
-  console.log(params.id);
-  console.log(event);
-
   useEffect(() => {
-    // Fetch event details based on params.id
-    // Example:
-    // fetch(`/api/events/${params.id}`)
-    //   .then(response => response.json())
-    //   .then(data => setEvent(data));
     if (params.id) {
-      setEvent(featuredEvents.find((e) => e.id === Number(params.id))!);
+      fetch(`http://localhost:5000/events/${params.id}`)
+        .then((response) => response.json())
+        .then((data) => setEvent(data));
     }
   }, [params.id]);
 
@@ -92,7 +86,7 @@ export default function EventDetailsPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Event Header */}
             <div>
-              <Badge className="mb-3">{event?.category}</Badge>
+              <Badge className="mb-3">{event?.category?.name}</Badge>
               <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
                 {event?.name}
               </h1>
@@ -105,14 +99,18 @@ export default function EventDetailsPage() {
                   />
                   <div>
                     <div className="font-medium text-foreground">
-                      {formatDate(event?.start_date)}
+                      {formatDate(event?.start_date ?? new Date().toString())}
                       {event?.start_date !== event?.end_date && (
-                        <> - {formatDate(event?.end_date)}</>
+                        <>
+                          {" "}
+                          -{" "}
+                          {formatDate(event?.end_date ?? new Date().toString())}
+                        </>
                       )}
                     </div>
                     <div className="text-sm">
-                      {formatTime(event?.start_date)} -{" "}
-                      {formatTime(event?.end_date)}
+                      {formatTime(event?.start_date ?? new Date().toString())} -{" "}
+                      {formatTime(event?.end_date ?? new Date().toString())}
                     </div>
                   </div>
                 </div>
@@ -154,13 +152,13 @@ export default function EventDetailsPage() {
                     variant="outline"
                     className="bg-accent/10 border-accent"
                   >
-                    {event?.status?.charAt(0)?.toUpperCase() +
+                    {(event?.status?.charAt(0)?.toUpperCase() ?? "") +
                       event?.status?.slice(1)}
                   </Badge>
                 </div>
                 <div className="flex justify-between py-2 border-b border-border">
                   <span className="text-muted-foreground">Category</span>
-                  <span className="font-medium">{event?.category}</span>
+                  <span className="font-medium">{event?.category?.name}</span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-muted-foreground">Organizer</span>
@@ -177,7 +175,7 @@ export default function EventDetailsPage() {
                 <CardTitle>Select Tickets</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {(event?.tickets ?? []).map((ticket: any) => (
+                {(event?.tickets ?? []).map((ticket) => (
                   <div
                     key={ticket.id}
                     className="p-4 border border-border rounded-lg hover:border-accent transition-colors cursor-pointer"
@@ -191,7 +189,12 @@ export default function EventDetailsPage() {
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold">
-                          KES {ticket.price}
+                          {new Intl.NumberFormat("en-US", {
+                            style: "currency",
+                            currency: "KES",
+                            currencyDisplay: "code",
+                            compactDisplay: "short",
+                          }).format(ticket.price)}
                         </div>
                       </div>
                     </div>
