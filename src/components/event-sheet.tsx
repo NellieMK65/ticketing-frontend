@@ -92,12 +92,23 @@ const formatDateForInput = (dateStr?: string) => {
   return date.toISOString().slice(0, 16);
 };
 
+/**
+ * Helper to format date for API submission
+ * Converts datetime-local format to ISO 8601 format expected by backend
+ */
+const formatDateForApi = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return date.toISOString().replace(".000Z", "Z");
+};
+
 export const EventSheet = ({
   event,
   categories,
+  onEventCreated,
 }: {
   event?: Event;
   categories: Category[];
+  onEventCreated?: () => void; // Callback after successful event creation/update
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -105,6 +116,7 @@ export const EventSheet = ({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<EventFormData>({
     resolver: zodResolver(schema),
@@ -120,8 +132,40 @@ export const EventSheet = ({
     },
   });
 
-  const handleFormSubmit = (data: EventFormData) => {
-    console.log("Form submitted:", data);
+  const handleFormSubmit = async (data: EventFormData) => {
+    try {
+      const url = event
+        ? `http://localhost:5000/events/${event.id}`
+        : "http://localhost:5000/events";
+
+      const response = await fetch(url, {
+        method: event ? "PATCH" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          start_date: formatDateForApi(data.start_date),
+          end_date: formatDateForApi(data.end_date),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save event");
+      }
+
+      // Reset form if creating new event
+      if (!event) {
+        reset();
+      }
+
+      // Close sheet and notify parent
+      setOpen(false);
+      onEventCreated?.();
+    } catch (error) {
+      console.error("Error saving event:", error);
+      alert("Failed to save event. Please try again.");
+    }
   };
 
   return (
